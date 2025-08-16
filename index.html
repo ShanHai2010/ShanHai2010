@@ -1,161 +1,910 @@
-<html>
- <head></head>
- <body>
-  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>山海官方</title>
-  <style>
-  *{
-    nargin:0;
-    padding:0;
-    }
-  body {
-    background:#fcfcfc;
-    }
-  html {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>山海引导验证界面</title>
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; /* 盒模型设置为border-box */
+            font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif; /* 字体设置 */
+            -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
+        }
+        
+        /* 页面主体样式 */
+        body {
+            height: 100vh; /* 全屏高度 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('背景图.png') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 背景遮罩层 */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.25) 100%);
+            z-index: 0;
+            transition: all 0.5s ease; /* 平滑过渡效果 */
+        }
+        
+        /* 主容器样式 - 毛玻璃效果 */
+        .auth-container {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.20); /* 半透明背景 */
+            backdrop-filter: blur(2.8px); /* 毛玻璃效果 */
+            -webkit-backdrop-filter: blur(16px); /* Safari兼容 */
+            border-radius: 24px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3), /* 外阴影 */
+                0 0 0 1px rgba(255, 255, 255, 0.1), /* 边框效果 */
+                inset 0 0 20px rgba(255, 255, 255, 0.05); /* 内发光 */
+            width: 90%;
+            max-width: 440px;
+            padding: 45px 45px 60px; /* 底部增加内边距给版权信息留空间 */
+            border: 1px solid rgba(255, 255, 255, 0.15); /* 半透明边框 */
+            overflow: hidden;
+            transform: translateY(0);
+            opacity: 1;
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); /* 自定义缓动动画 */
+        }
+        
+        /* 默认主题 - 保持原始样式 */
+        .auth-container.theme-default {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        
+        /* Google颜色主题 */
+        /* Google蓝色主题 */
+        .auth-container.theme-google-blue {
+            background: rgba(66, 133, 244, 0.15); /* Google蓝 */
+        }
+        
+        /* Google红色主题 */
+        .auth-container.theme-google-red {
+            background: rgba(234, 67, 53, 0.15); /* Google红 */
+        }
+        
+        /* Google黄色主题 */
+        .auth-container.theme-google-yellow {
+            background: rgba(251, 188, 5, 0.15); /* Google黄 */
+        }
+        
+        /* Google绿色主题 */
+        .auth-container.theme-google-green {
+            background: rgba(52, 168, 83, 0.15); /* Google绿 */
+        }
+        
+        /* Google紫色主题 */
+        .auth-container.theme-google-purple {
+            background: rgba(103, 58, 183, 0.15); /* Google紫 */
+        }
+        
+        /* Google粉色主题 */
+        .auth-container.theme-google-pink {
+            background: rgba(233, 30, 99, 0.15); /* Google粉 */
+        }
+        
+        /* Google青色主题 */
+        .auth-container.theme-google-cyan {
+            background: rgba(0, 188, 212, 0.15); /* Google青 */
+        }
+        
+        /* Google橙色主题 */
+        .auth-container.theme-google-orange {
+            background: rgba(245, 124, 0, 0.15); /* Google橙*/
+        }
+        
+        /* 主容器背景光效动画 */
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                46deg, 
+                rgba(255,255,255,0.05) 0%, 
+                rgba(255,255,255,0.1) 50%, 
+                rgba(255,255,255,0.05) 100%
+            );
+            transform: rotate(90deg);
+            animation: shine 10s infinite linear; /*光效动画*/
+            z-index: -1;
+            opacity: 0.7;
+            filter: blur(0.5px); /*增加模糊程度*/
+            transition: all 0.5s ease;
+        }
+        
+        /* 禁用光效的样式 */
+        .auth-container.no-shine::before {
+            animation: none;
+            opacity: 0;
+        }
+        
+        /* 光效动画定义 */
+        @keyframes shine {
+            0% { transform: translateX(-90%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+        
+        /*头部样式*/
+        .auth-header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .auth-header h1 {
+            font-size: 2.4rem;
+            color: white;
+            margin-bottom: 12px;
+            font-weight: 700;
+            text-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(255, 255, 255, 0.15);
+            letter-spacing: 1.5px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        /*标题倒影效果*/
+        .auth-header h1::after {
+            content: '山海引导验证';
+            position: absolute;
+            top: -17%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: rgba(255,255,255,0.3);
+            transform: 
+                scaleY(1) 
+                translateY(10px) 
+                skewX(2deg);/*斜体效果*/
+            transform-origin: 0 0;
+            filter: blur(-1px);/* 清晰效果 */
+            opacity: 0.7;
+            background: linear-gradient(
+                to bottom, 
+                rgba(255,255,255,0.3) 0%, 
+                transparent 80%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            text-shadow: none;
+            z-index: -1;
+        }
+        
+        .auth-header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            letter-spacing: 0.5px;
+        }
+        
+        /* 标签页样式 */
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        /* 标签页底部装饰线 */
+        .auth-tabs::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+        
+        /* 单个标签样式 */
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px 0;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            user-select: none;
+            -webkit-user-select: none;
+            outline: none;
+        }
+        
+        /* 活动标签样式 */
+        .auth-tab.active {
+            color: white;
+        }
+        
+        /* 标签指示器样式 */
+        .auth-tab-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4285f4, #34a853); /* 默认Google渐变色 */
+            border-radius: 3px 3px 0 0;
+            box-shadow: 0 2px 10px rgba(66, 133, 244, 0.5);
+            transition: all 0.4s cubic-bezier(0.65, 0, 0.35, 1); /* 平滑移动动画 */
+        }
+        
+        /* 主题对应的标签指示器颜色 */
+        .auth-container.theme-google-blue .auth-tab-indicator {
+            background: linear-gradient(90deg, #4285f4, #34a853);
+            box-shadow: 0 2px 10px rgba(66, 133, 244, 0.5);
+        }
+        
+        .auth-container.theme-google-red .auth-tab-indicator {
+            background: linear-gradient(90deg, #ea4335, #fbbc05);
+            box-shadow: 0 2px 10px rgba(234, 67, 53, 0.5);
+        }
+        
+        .auth-container.theme-google-yellow .auth-tab-indicator {
+            background: linear-gradient(90deg, #fbbc05, #ea4335);
+            box-shadow: 0 2px 10px rgba(251, 188, 5, 0.5);
+        }
+        
+        .auth-container.theme-google-green .auth-tab-indicator {
+            background: linear-gradient(90deg, #34a853, #4285f4);
+            box-shadow: 0 2px 10px rgba(52, 168, 83, 0.5);
+        }
+        
+        .auth-container.theme-google-purple .auth-tab-indicator {
+            background: linear-gradient(90deg, #673ab7, #e91e63);
+            box-shadow: 0 2px 10px rgba(103, 58, 183, 0.5);
+        }
+        
+        .auth-container.theme-google-pink .auth-tab-indicator {
+            background: linear-gradient(90deg, #e91e63, #673ab7);
+            box-shadow: 0 2px 10px rgba(233, 30, 99, 0.5);
+        }
+        
+        .auth-container.theme-google-cyan .auth-tab-indicator {
+            background: linear-gradient(90deg, #00bcd4, #4285f4);
+            box-shadow: 0 2px 10px rgba(0, 188, 212, 0.5);
+        }
+        
+        .auth-container.theme-google-orange .auth-tab-indicator {
+            background: linear-gradient(90deg, #ff6d00, #ea4335);
+            box-shadow: 0 2px 10px rgba(245, 124, 0, 0.5);
+        }
+        
+        /* 表单样式 */
+        .auth-form {
+            display: none;
+            animation: fadeIn 0.5s ease; /* 淡入动画 */
+        }
+        
+        /* 活动表单样式 */
+        .auth-form.active {
+            display: block;
+        }
+        
+        /* 淡入动画定义 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 表单组样式 */
+        .form-group {
+            margin-bottom: 28px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        /* 输入框样式 */
+        .form-group input {
+            width: 100%;
+            padding: 16px 22px;
+            background: rgba(255, 255, 255, 0.1); /* 半透明背景 */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* 半透明边框 */
+            border-radius: 12px;
+            font-size: 1.05rem;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+        
+        /* 占位符样式 */
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* 输入框聚焦样式 */
+        .form-group input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 提交按钮样式 */
+        .submit-btn {
+            width: 100%;
+            padding: 17px;
+            background: linear-gradient(45deg, #4285f4, #34a853); /* 默认Google渐变色 */
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            position: relative;
+            overflow: hidden;
+            outline: none;
+            opacity: 0.9; /* 半透明效果 */
+        }
+        
+        /* 主题对应的按钮颜色 */
+        .auth-container.theme-google-blue .submit-btn {
+            background: linear-gradient(45deg, #4285f4, #34a853);
+        }
+        
+        .auth-container.theme-google-red .submit-btn {
+            background: linear-gradient(45deg, #ea4335, #fbbc05);
+        }
+        
+        .auth-container.theme-google-yellow .submit-btn {
+            background: linear-gradient(45deg, #fbbc05, #ea4335);
+        }
+        
+        .auth-container.theme-google-green .submit-btn {
+            background: linear-gradient(45deg, #34a853, #4285f4);
+        }
+        
+        .auth-container.theme-google-purple .submit-btn {
+            background: linear-gradient(45deg, #673ab7, #e91e63);
+        }
+        
+        .auth-container.theme-google-pink .submit-btn {
+            background: linear-gradient(45deg, #e91e63, #673ab7);
+        }
+        
+        .auth-container.theme-google-cyan .submit-btn {
+            background: linear-gradient(45deg, #00bcd4, #4285f4);
+        }
+        
+        .auth-container.theme-google-orange .submit-btn {
+            background: linear-gradient(45deg, #ff6d00, #ea4335);
+        }
+        
+        /* 按钮悬停效果 */
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            opacity: 1; /* 悬停时不透明 */
+        }
+        
+        /* 按钮点击效果 */
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* 按钮光效 */
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0));
+            transform: rotate(30deg);
+            transition: all 0.5s ease;
+        }
+        
+        .submit-btn:hover::after {
+            left: 100%;
+        }
+        
+        /* 粒子样式 */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            z-index: -1;
+            filter: blur(0.5px);
+            animation: float linear infinite;
+        }
+        
+        /* 禁用粒子效果 */
+        .no-particles .particle {
+            display: none;
+        }
+        
+        /* 粒子动画 */
+        @keyframes float {
+            to {
+                transform: translate(var(--tx), var(--ty));
+            }
+        }
+        
+        /* 设置按钮样式 */
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.8);
+            border: none;
+            outline: none;
+            z-index: 10;
+        }
+        
+        /* 设置按钮悬停效果 */
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: rotate(30deg);
+        }
+        
+        .settings-btn i {
+            font-size: 18px;
+        }
+        
+        /* 设置面板样式 */
+        .settings-panel {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 15px;
+            width: 220px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        /* 活动设置面板 */
+        .settings-panel.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .settings-panel h3 {
+            color: white;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        /* 设置选项样式 */
+        .settings-option {
+            margin-bottom: 12px;
+        }
+        
+        .settings-option label {
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        
+        .settings-option input[type="checkbox"] {
+            margin-right: 10px;
+            width: 16px;
+            height: 16px;
+            accent-color: #4285f4; /* 复选框颜色 */
+        }
+        
+        /* 主题选项样式 */
+        .theme-options {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .theme-option {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        /* 主题选项悬停效果 */
+        .theme-option:hover {
+            transform: scale(1.1);
+        }
+        
+        /* 活动主题选项 */
+        .theme-option.active {
+            border-color: white;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+        }
+        
+        /* 默认主题颜色 */
+        .theme-default {
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+        }
+        
+        /* Google主题颜色 */
+        .theme-google-blue {
+            background: #4285f4;
+        }
+        
+        .theme-google-red {
+            background: #ea4335;
+        }
+        
+        .theme-google-yellow {
+            background: #fbbc05;
+        }
+        
+        .theme-google-green {
+            background: #34a853;
+        }
+        
+        .theme-google-purple {
+            background: #673ab7;
+        }
+        
+        .theme-google-pink {
+            background: #e91e63;
+        }
+        
+        .theme-google-cyan {
+            background: #00bcd4;
+        }
+        
+        .theme-google-orange {
+            background: #ff6d00;
+        }
+        
+        /* 版权信息样式 */
+        .copyright {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.75rem;
+            padding: 0 20px;
+            z-index: 1;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 35px 25px 50px; /* 调整底部内边距 */
+                border-radius: 20px;
+            }
+            
+            .auth-header h1 {
+                font-size: 2rem;
+            }
+            
+            .settings-panel {
+                width: 200px;
+                right: 10px;
+            }
+            
+            .copyright {
+                font-size: 0.7rem;
+                padding: 0 15px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="auth-container" id="authContainer">
+        <button class="settings-btn" id="settingsBtn">
+            <i class="fas fa-cog"></i>
+        </button>
+        
+        <div class="settings-panel" id="settingsPanel">
+            <h3>界面设置</h3>
+            
+            <div class="settings-option">
+                <label>
+                    <input type="checkbox" id="particlesToggle" checked> 粒子效果
+                </label>
+            </div>
+            
+            <div class="settings-option">
+                <label>
+                    <input type="checkbox" id="shineToggle" checked> 背景光效
+                </label>
+            </div>
+            <!--如果不需要那么多可以减去CSS结构里的和这里的样式-->
+            <h3>颜色主题</h3>
+            <div class="theme-options">
+                <div class="theme-option theme-default active" data-theme="default"></div>
+                <div class="theme-option theme-google-blue" data-theme="google-blue"></div>
+                <div class="theme-option theme-google-red" data-theme="google-red"></div>
+                <div class="theme-option theme-google-yellow" data-theme="google-yellow"></div>
+                <div class="theme-option theme-google-green" data-theme="google-green"></div>
+                <div class="theme-option theme-google-purple" data-theme="google-purple"></div>
+                <div class="theme-option theme-google-pink" data-theme="google-pink"></div>
+                <div class="theme-option theme-google-cyan" data-theme="google-cyan"></div>
+                <div class="theme-option theme-google-orange" data-theme="google-orange"></div>
+            </div>
+        </div>
+        
+        <div class="auth-header">
+            <h1>山海引导验证</h1>
+            <p></p>
+        </div>
+        
+        <div class="auth-tabs">
+            <div class="auth-tab active" onclick="switchTab('login')" tabindex="-1">登录</div>
+            <div class="auth-tab" onclick="switchTab('register')" tabindex="-1">注册</div>
+            <div class="auth-tab-indicator" id="tabIndicator"></div>
+        </div>
+        <!--home.html是被跳转文件名称-->
+        <form id="loginForm" class="auth-form active" method="post" action="home.html" onsubmit="return handleSubmit(event)">
+            <input type="hidden" name="action" value="login">
+            
+            <div class="form-group">
+                <label for="loginUsername">用户名</label>
+                <input type="text" id="loginUsername" name="username" required maxlength="10" placeholder="输入您的用户名">
+            </div>
+            
+            <div class="form-group">
+                <label for="loginPassword">密码</label>
+                <input type="password" id="loginPassword" name="password" required minlength="6" maxlength="12" placeholder="输入您的密码">
+            </div>
+            
+            <button type="submit" class="submit-btn">登 录</button>
+        </form>
+        
+        <form id="registerForm" class="auth-form" method="post" action="home.html" onsubmit="return handleSubmit(event)">
+            <input type="hidden" name="action" value="register">
+            
+            <div class="form-group">
+                <label for="registerUsername">用户名</label>
+                <input type="text" id="registerUsername" name="username" required maxlength="10" 
+                       pattern="[^\{\}\<\>\[\]\'&quot;;\/]{1,10}" 
+                       title="用户名长度1-10字符，不能输入{}<>[]'&quot;;/等符号"
+                       placeholder="创建您的用户名">
+            </div>
+                        <!--注意的是，如果用户选择复制中文到不允许输入的输入框还是很难阻止-->
+            <div class="form-group">
+                <label for="registerPassword">密码</label>
+                <input type="password" id="registerPassword" name="password" required minlength="6" maxlength="12"
+                       pattern="[^\u4e00-\u9fa5]{6,12}" 
+                       title="密码长度6-12字符，不能输入中文"
+                       placeholder="创建您的密码">
+            </div>
+            
+            <button type="submit" class="submit-btn">注 册/登 录</button>
+        </form>
+        <!--你可以自定义文字，不限于版权说明-->
+        <div class="copyright">
+            © 2025 山海引导 - 版权所有 | 山海
+        </div>
+    </div>
     
-}
-.header{
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: rgba(0，0，0，.5);
-    z-index: -1
-}
-	.qq {
-		width: 160px;
-		height: 160px;
-		margin: 80px auto 0;
-		padding: 2px; 
-    	border-radius: 50%; 
-    	background-image: -webkit-linear-gradient(top, red 0%, blue 30%, yellow 60%, green 90%);
-    
-     box-shadow: 3px 3px 9px #ecf2ff,
-     -3px -3px 9px #fff;
-	}
-	.qq img {
-		width: 100%;
-		height: 100%;
-		border-radius: 50%;
-		animation:turn 5s linear infinite;
-		cursor: pointer;
-	}
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault();
+            setTimeout(() => {
+                event.target.submit();
+            }, 300);
+            return false;
+        }
 
-	@keyframes turn {
-		0% {
-			-webkit-transform: rotate(0deg);
-		}
-		100% {
-			-webkit-transform: rotate(360deg);
-		}
-	}
-	.solid-ht {
-		width: 1px;
-		height: 80px;
-        background-color: #79c9ff;
-		margin: 0 auto;
-  box-shadow: 1px 1px 3px #ccc,
-     -1px -1px 3px #fff;
-	}
-	.solid-wh {
-		width: 80%;
-		height: 1px;
-        background-color: #79c9ff;
-		margin: 0 auto ;
-  box-shadow: 1px 1px 3px #ccc,
-     -1px -1px 3px #fff;
-	}
-	.title {
-		width: 80%;
-		text-align: center;
-		margin: 35px auto;
-		background: linear-gradient(to right,#c4c8ff, #80dcff);
-  		-webkit-background-clip: text;
-  		color: transparent;
-        border-bottom: 0px dotted #333
-	}
-    .title h1 {
-        display: inline-block;
-        border-bottom: 1px dotted #dee9ff
-    }
-	.title p {
-		margin: 2px;
-	}
-
-   .box {
-     overflow:hidden;
-     width:90%;
-     hight:auto;
-     margin:0 auto;
-     margin-top:10px;
-     box-shadow:2px 2px 15px rgba(0,0,0,5);
-     border-radius:10px;
-     }
-   .box .top img{
-     width:100%;
-     }
-   .button {
-     padding:5px 30px;
-     }
-   .button h1{
-     font-size:22px;
-     font-weight:400;
-     text-indent:em;
-     color:#1f2d3d;
-     }
-   .button b{
-     font-size:14px;
-     color:#4c4948;
-     font-weight:400;
-     }
-  </style>
-      <div id="jsi-water-line-container" class="header"></div> 
-
-	<div class="qq">
-		<img src="http://q1.qlogo.cn/g?b=qq&nk=2702800953&s=640">
-	</div>
-	<div class="solid-ht"></div>
-	<div class="solid-wh"></div>
-	<div class="title">
-		<h1><i>山海导航页面</i></h1>
-		<p>Hello Bor</p>
-	</div>
-	<div class="solid-wh"></div>
-	<div class="solid-ht"></div>
-  <div class="content">
-   <div class="box">
-    <div class="top"><img src="卡密验证.jpg">
-    </div>
-    <div class="bottom">
-     <h1>卡密验证系统</h1>
-     <p>一个公益且强大的系统，你可以在这里生成免费的卡密，用于你的项目制作，祝您好运。</p>
-    </div>
-   </div>
-      <div class="box">
-    <div class="top"><img src="云更新.jpg">
-    </div>
-    <div class="bottom">
-     <h1>云更新</h1>
-     <p>一个公益且强大的系统，你可以在这里创建免费的云更新服务，用于你的项目更新，祝您好运。</p>
-    </div>
-   </div>
-   <div class="box">
-    <div class="top"><img src="卡网.png">
-    </div>
-    <div class="bottom">
-     <h1>卡网</h1>
-     <p>一个公益且强大的系统，你可以在这里创建免费的商店，用于你的贸易，祝您好运。</p>
-    </div>
-   </div>
-   
-  </div>
-  <div class="footer"></div>
- </body>
-</html>
+        //标签页切换
+        function switchTab(tab) {
+            //更新标签样式
+            document.querySelectorAll('.auth-tab').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`.auth-tab:nth-child(${tab === 'login' ? 1 : 2})`).classList.add('active');
+            
+            //更新指示器位置
+            const indicator = document.getElementById('tabIndicator');
+            const activeTab = document.querySelector('.auth-tab.active');
+            const tabRect = activeTab.getBoundingClientRect();
+            const tabsRect = document.querySelector('.auth-tabs').getBoundingClientRect();
+            
+            indicator.style.width = `${tabRect.width * 0.6}px`;
+            indicator.style.left = `${tabRect.left - tabsRect.left + tabRect.width * 0.2}px`;
+            
+            //切换表单显示
+            document.getElementById('loginForm').classList.remove('active');
+            document.getElementById('registerForm').classList.remove('active');
+            document.getElementById(tab + 'Form').classList.add('active');
+        }
+        
+        //初始化加载动画
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.auth-container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+            
+            //初始化标签指示器位置
+            setTimeout(() => {
+                switchTab('login');
+            }, 150);
+            
+            //初始化粒子系统
+            createParticles();
+            
+            //初始化设置面板
+            initSettings();
+        });
+        
+        //粒子系统
+        function createParticles() {
+            const container = document.getElementById('authContainer');
+            const particleCount = 30; //粒子数量30个
+            
+            for (let i = 0; i < particleCount; i++) {
+                createParticle(container);
+            }
+            
+            //定期检查并补充粒子
+            setInterval(() => {
+                const existingParticles = document.querySelectorAll('.particle');
+                if (existingParticles.length < particleCount) {
+                    createParticle(container);
+                }
+            }, 1000);
+        }
+        
+        function createParticle(container) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            //随机大小
+            const size = Math.random() * 8 + 0.5;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            //随机初始位置 (在容器内)
+            const startX = Math.random() * 100;
+            const startY = Math.random() * 100;
+            particle.style.left = `${startX}%`;
+            particle.style.top = `${startY}%`;
+            
+            //随机透明度
+            const opacity = Math.random() * 1 + 0.3;
+            particle.style.opacity = opacity;
+            
+            //随机动画参数
+            const angle = Math.random() * Math.PI * 10;
+            const distance = Math.random() * 800 + 30;
+            
+            //随机速度 (5-15秒完成动画)
+            const speedVariation = Math.random() * 50 + 15;
+            const duration = speedVariation;
+            
+            //计算移动路径
+            const tx = Math.cos(angle) * distance;
+            const ty = Math.sin(angle) * distance;
+            
+            particle.style.setProperty('--tx', `${tx}px`);
+            particle.style.setProperty('--ty', `${ty}px`);
+            particle.style.animationDuration = `${duration}s`;
+            
+            container.appendChild(particle);
+            
+            //粒子动画结束后重新定位
+            particle.addEventListener('animationiteration', () => {
+                // 10%概率回到容器内
+                if (Math.random() < 0.1) {
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    
+                    //随机改变速度
+                    const newDuration = Math.random() * 10 + 5;
+                    particle.style.animationDuration = `${newDuration}s`;
+                }
+            });
+        }
+        
+        //设置面板功能
+        function initSettings() {
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsPanel = document.getElementById('settingsPanel');
+            const particlesToggle = document.getElementById('particlesToggle');
+            const shineToggle = document.getElementById('shineToggle');
+            const themeOptions = document.querySelectorAll('.theme-option');
+            
+            //切换设置面板
+            settingsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                settingsPanel.classList.toggle('active');
+            });
+            
+            //点击页面其他位置关闭设置面板
+            document.addEventListener('click', () => {
+                settingsPanel.classList.remove('active');
+            });
+            
+            //阻止面板内部点击事件冒泡
+            settingsPanel.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            //粒子效果开关
+            particlesToggle.addEventListener('change', () => {
+                document.body.classList.toggle('no-particles', !particlesToggle.checked);
+            });
+            
+            //背景光效开关
+            shineToggle.addEventListener('change', () => {
+                document.getElementById('authContainer').classList.toggle('no-shine', !shineToggle.checked);
+            });
+            
+            //主题切换
+            themeOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    //移除所有主题类
+                    document.getElementById('authContainer').className = 'auth-container';
+                    
+                    //添加选中的主题类
+                    if (option.dataset.theme !== 'default') {
+                        document.getElementById('authContainer').classList.add(`theme-${option.dataset.theme}`);
+                    }
+                    
+                    //更新活动状态
+                    themeOptions.forEach(opt => opt.classList.remove('active'));
+                    option.classList.add('active');
+                });
+            });
+        }
+    </script>
+</body>
 </html>
